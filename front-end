@@ -1,0 +1,46 @@
+import React, { useState, useEffect } from 'react';
+import './App.css';
+
+function App() {
+  const [solicitacoes, setSolicitacoes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('https://meuapp-backend.herokuapp.com/api/solicitacoes') // URL do seu backend no Heroku
+      .then((response) => response.json())
+      .then((data) => {
+        setSolicitacoes(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Erro ao carregar as solicitações:", error);
+        setLoading(false);
+      });
+  }, []);
+
+  return (
+    <div className="App">
+      <h1>Solicitações de Aproveitamento</h1>
+      {loading ? (
+        <p>Carregando...</p>
+      ) : (
+        <div>
+          {solicitacoes.length > 0 ? (
+            solicitacoes.map((solicitacao) => (
+              <div key={solicitacao.id} className="solicitacao-item">
+                <h3>{solicitacao.aluno.nome}</h3>
+                <p>Status: {solicitacao.status}</p>
+                <p>Ciclo: {solicitacao.cicloEntrada}</p>
+                <button>Ver Detalhes</button>
+              </div>
+            ))
+          ) : (
+            <p>Sem solicitações no momento.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
